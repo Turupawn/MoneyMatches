@@ -5,7 +5,46 @@ import getWeb3 from "./utils/getWeb3";
 import "./App.css";
 
 class App extends Component {
-  state = { storageValue: 0, web3: null, accounts: null, contract: null };
+  state = { money_match_id: "1", bet_amount: "", player: "", total_pot: 0, player1_pot: 0, player2_pot: 0, my_player1_bet: 0, my_player2_bet: 0, storageValue: 0, web3: null, accounts: null, contract: null };
+
+  constructor(props) {
+    super(props);
+
+    this.handleBetAmountChange = this.handleBetAmountChange.bind(this);
+    this.handlePlayerChange = this.handlePlayerChange.bind(this);
+  }
+
+  handleBetAmountChange(event) {
+    this.setState({bet_amount: event.target.value});
+  }
+
+  handlePlayerChange(event) {
+    this.setState({player: event.target.value});
+  }
+
+  handleSubmit(event) {
+    alert('A name was submitted: ' + this.state.value);
+    event.preventDefault();
+  }
+
+  async updateStats() {
+    const { accounts, contract } = this.state;
+    
+    const player1_pot = await contract.methods.getPlayer1Pot(this.state.money_match_id).call();
+    this.setState({ player1_pot: this.state.web3.utils.fromWei(player1_pot,'ether') });
+    
+    const player2_pot = await contract.methods.getPlayer2Pot(this.state.money_match_id).call();
+    this.setState({ player2_pot: this.state.web3.utils.fromWei(player2_pot,'ether') });
+
+    const my_player1_bet = await contract.methods.getMyPlayer1Bet(this.state.money_match_id, accounts[0]).call();
+    this.setState({ my_player1_bet: this.state.web3.utils.fromWei(my_player1_bet,'ether') });
+
+    const my_player2_bet = await contract.methods.getMyPlayer2Bet(this.state.money_match_id, accounts[0]).call();
+    this.setState({ my_player2_bet: this.state.web3.utils.fromWei(my_player2_bet,'ether') });
+    
+    var total_pot = Number(player1_pot) + Number(player2_pot);
+    this.setState({ total_pot: this.state.web3.utils.fromWei(total_pot.toString(), 'ether') });
+  }
 
   componentDidMount = async () => {
     try {
@@ -35,17 +74,27 @@ class App extends Component {
     }
   };
 
+  betJS = async () => {
+    const { accounts, contract } = this.state;
+    // Stores a given value, 5 by default.
+    await contract.methods.bet(this.state.money_match_id, this.state.web3.utils.toWei(this.state.bet_amount,'ether'), this.state.player).send({ from: accounts[0], value: this.state.web3.utils.toWei(this.state.bet_amount, 'ether') });
+
+
+    this.updateStats();
+  };
+
+  cashOutJS = async () => {
+    const { accounts, contract } = this.state;
+    // Stores a given value, 5 by default.
+    await contract.methods.cashOut(this.state.money_match_id).send({ from: accounts[0] });
+
+    this.updateStats();
+  };
+
   runExample = async () => {
     const { accounts, contract } = this.state;
 
-    // Stores a given value, 5 by default.
-    await contract.methods.set(5).send({ from: accounts[0] });
-
-    // Get the value from the contract to prove it worked.
-    const response = await contract.methods.get().call();
-
-    // Update state with the result.
-    this.setState({ storageValue: response });
+    this.updateStats();
   };
 
   render() {
@@ -54,17 +103,34 @@ class App extends Component {
     }
     return (
       <div className="App">
-        <h1>Good to Go!</h1>
-        <p>Your Truffle Box is installed and ready.</p>
-        <h2>Smart Contract Example</h2>
-        <p>
-          If your contracts compiled and migrated successfully, below will show
-          a stored value of 5 (by default).
-        </p>
-        <p>
-          Try changing the value stored on <strong>line 40</strong> of App.js.
-        </p>
-        <div>The stored value is: {this.state.storageValue}</div>
+        <h1>Inspect pot</h1>
+        <div>Total pot: {this.state.total_pot} eth</div>
+        <div>Player 1 pot: {this.state.player1_pot} eth</div>
+        <div>Player 2 pot: {this.state.player2_pot} eth</div>
+        <div>My player 1 bet: {this.state.my_player1_bet} eth</div>
+        <div>My player 2 bet: {this.state.my_player2_bet} eth</div>
+        <button onClick={this.getPlayer1PotJS}>
+          Inspect
+        </button>
+        <h1>Bet</h1>
+        <form onSubmit={this.betJS}>
+          <label>
+            Bet amount:
+            <input type="text" value={this.state.bet_amount} onChange={this.handleBetAmountChange} />
+          </label>
+          <label>
+            Player:
+            <input type="text" value={this.state.player} onChange={this.handlePlayerChange} />
+          </label>
+        </form>
+        <button onClick={this.betJS}>
+          Bet
+        </button>
+
+        <h1>Cash out</h1>
+        <button onClick={this.cashOutJS}>
+          Cash out
+        </button>
       </div>
     );
   }
