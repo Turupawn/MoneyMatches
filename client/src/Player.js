@@ -2,15 +2,9 @@ import React, { Component } from "react";
 import SimpleStorageContract from "./contracts/SimpleStorage.json";
 import getWeb3 from "./utils/getWeb3";
 
-import "./App.css";
-
 class Player extends Component {
   state = { money_match_id: "1", // Hardcoded preset
             web3: null, accounts: null, contract: null };
-
-  constructor(props) {
-    super(props);
-  }
 
   componentDidMount = async () => {
     try {
@@ -51,7 +45,6 @@ class Player extends Component {
   };
 
   runExample = async () => {
-    const { accounts, contract } = this.state;
   };
 
   render() {

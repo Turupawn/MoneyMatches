@@ -1,35 +1,30 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './App';
 import Host from './Host';
 import Player from './Player';
 import * as serviceWorker from './serviceWorker';
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route } from "react-router-dom";
+
+import {ThemeProvider} from 'styled-components'
+import {theme} from 'rimble-ui'
+import Header from "./components/Header";
 
 function AppRouter() {
   return (
-    <Router>
+    <ThemeProvider theme={theme}>
       <div>
-        <nav>
-          <ul>
-            <li>
-              <a href="/">Home</a>
-            </li>
-            <li>
-              <a href="/host">Host</a>
-            </li>
-            <li>
-              <a href="/player">Player</a>
-            </li>
-          </ul>
-        </nav>
-
-        <Route path="/" exact component={App} />
-        <Route path="/host/" component={Host} />
-        <Route path="/player/" component={Player} />
+        <Header/>
+        <Router>
+          <div>
+            <Route path="/host/" component={Host} />
+            <Route path="/player/" component={Player} />
+            <Route path="/money_match/:money_match_id?" component={App} />
+            <Route path="/" exact component={App} />
+          </div>
+        </Router>
       </div>
-    </Router>
+    </ThemeProvider>
   );
 }
 

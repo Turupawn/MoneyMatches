@@ -7,24 +7,32 @@ contract SimpleStorage {
   // Structs
   struct MoneyMatch
   {
+    string player1_name;
+    address player1_addr;
+    address player2_addr;
+    address host_addr;
+    uint8 winner_cut_percentage;
+    uint8 host_cut_percentage;
+    string summary;
+    string image_ipfs_hash;
     MoneyMatchState state;
     uint256 player1_pot;
     uint256 player2_pot;
-    address host_addr;
-    address player1_addr;
-    address player2_addr;
-    uint8 host_cut_percentage;
-    uint8 winner_cut_percentage;
   }
 
   // Events
   event MoneyMatchCreated
   (
-    address host_addr,
+    uint256 id,
+    string player1_name,
+    string player2_name,
     address player1_addr,
     address player2_addr,
+    address host_addr,
+    uint8 winner_cut_percentage,
     uint8 host_cut_percentage,
-    uint8 winner_cut_percentage
+    string summary,
+    string image_ipfs_hash
   );
 
   event BetSubmitted
@@ -233,27 +241,41 @@ contract SimpleStorage {
 
   // Write functions
   function createMoneyMatch (
+    string memory player1_name,
+    string memory player2_name,
     address player1_addr,
     address player2_addr,
+    uint8 winner_cut_percentage,
     uint8 host_cut_percentage,
-    uint8 winner_cut_percentage
+    string memory summary,
+    string memory image_ipfs_hash
   ) public {
     money_match_count = money_match_count.add(1);
-    money_matches[money_match_count] = MoneyMatch(MoneyMatchState.BetsOpen,
-      0,
-      0,
-      msg.sender,
+    money_matches[money_match_count] = MoneyMatch(
+      player1_name,
       player1_addr,
       player2_addr,
+      msg.sender,
+      winner_cut_percentage,
       host_cut_percentage,
-      winner_cut_percentage);
+      summary,
+      image_ipfs_hash,
+      MoneyMatchState.BetsOpen,
+      0,
+      0
+    );
 
     emit MoneyMatchCreated (
-      msg.sender,
+      money_match_count,
+      player1_name,
+      player2_name,
       player1_addr,
       player2_addr,
+      msg.sender,
+      winner_cut_percentage,
       host_cut_percentage,
-      winner_cut_percentage
+      summary,
+      image_ipfs_hash
     );
   }
 

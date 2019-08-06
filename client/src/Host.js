@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import SimpleStorageContract from "./contracts/SimpleStorage.json";
 import getWeb3 from "./utils/getWeb3";
-
-import "./Admin.css";
+import ipfs from './ipfs'
 
 class Admin extends Component {
   state = { money_match_id: "1", // Hardcoded preset
@@ -10,6 +9,10 @@ class Admin extends Component {
             address_player2: "",
             host_cut_percentage: "",
             winner_cut_percentage: "",
+            name: "",
+            description: "",
+            image_buffer: null,
+            image_ipfs_hash: "",
             web3: null, accounts: null, contract: null };
 
   constructor(props) {
@@ -19,6 +22,9 @@ class Admin extends Component {
     this.handleAddressPlayer2Change = this.handleAddressPlayer2Change.bind(this);
     this.handleHostCutPercentageChange = this.handleHostCutPercentageChange.bind(this);
     this.handleWinnerCutPercentageChange = this.handleWinnerCutPercentageChange.bind(this);
+    this.handleNameChange = this.handleNameChange.bind(this);
+    this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
+    this.handleImageChange = this.handleImageChange.bind(this);
   }
 
   handleAddressPlayer1Change(event) {
@@ -35,6 +41,23 @@ class Admin extends Component {
 
   handleWinnerCutPercentageChange(event) {
     this.setState({winner_cut_percentage: event.target.value});
+  }
+
+  handleNameChange(event) {
+    this.setState({name: event.target.value});
+  }
+
+  handleDescriptionChange(event) {
+    this.setState({description: event.target.value});
+  }
+
+  handleImageChange(event) {
+    const file = event.target.files[0];
+    const reader = new window.FileReader();
+    reader.readAsArrayBuffer(file);
+    reader.onloadend = () => {
+      this.setState({ image_buffer: Buffer(reader.result) });
+    }
   }
 
   componentDidMount = async () => {
@@ -67,10 +90,26 @@ class Admin extends Component {
 
   createMoneyMatchJS = async () => {
     const { accounts, contract } = this.state;
-    await contract.methods.createMoneyMatch(this.state.address_player1,
-                                              this.state.address_player2,
-                                              this.state.host_cut_percentage,
-                                              this.state.winner_cut_percentage).send({ from: accounts[0] });
+
+    console.log("A");
+    await ipfs.files.add(this.state.image_buffer, (error, result) => {
+      if(error) {
+        console.log(error);
+        return;
+      }
+      this.setState({ image_ipfs_hash: result[0].hash });
+      console.log(this.state.image_ipfs_hash);
+    
+      contract.methods.createMoneyMatch(
+        this.state.address_player1,
+        this.state.address_player2,
+        this.state.host_cut_percentage,
+        this.state.winner_cut_percentage,
+        this.state.name,
+        this.state.description,
+        this.state.image_ipfs_hash).send({ from: accounts[0] });
+    });
+    console.log("B");
   };
 
   closeBetsJS = async () => {
@@ -94,7 +133,6 @@ class Admin extends Component {
   };
 
   runExample = async () => {
-    const { accounts, contract } = this.state;
   };
 
   render() {
@@ -105,6 +143,18 @@ class Admin extends Component {
       <div className="Admin">
         <h1>Create money match</h1>
         <form>
+          <label>
+            Name:
+            <input type="text" value={this.state.name} onChange={this.handleNameChange} />
+          </label>
+          <label>
+            Description:
+            <input type="text" value={this.state.description} onChange={this.handleDescriptionChange} />
+          </label>
+          <label>
+            Image:
+            <input type="file" onChange={this.handleImageChange} />
+          </label>
           <label>
             Player 1 address:
             <input type="text" value={this.state.address_player1} onChange={this.handleAddressPlayer1Change} />
