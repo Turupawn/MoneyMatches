@@ -1,0 +1,118 @@
+Compiling your contracts...
+===========================
+> Compiling ./contracts/Migrations.sol
+> Compiling ./contracts/SimpleStorage.sol
+> Compiling client/node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol
+> Artifacts written to /home/turupawn/Projects/Dapps/MoneyMatches/client/src/contracts
+> Compiled successfully using:
+   - solc: 0.5.8+commit.23d335f2.Emscripten.clang
+
+
+Migrations dry-run (simulation)
+===============================
+> Network name:    'rinkeby-fork'
+> Network id:      4
+> Block gas limit: 0x6ad3e8
+
+
+1_initial_migration.js
+======================
+
+   Deploying 'Migrations'
+   ----------------------
+   > block number:        4884833
+   > block timestamp:     1565402431
+   > account:             0x730bF3B67090511A64ABA060FbD2F7903536321E
+   > balance:             28.368307341499999999
+   > gas used:            246393
+   > gas price:           10 gwei
+   > value sent:          0 ETH
+   > total cost:          0.00246393 ETH
+
+   -------------------------------------
+   > Total cost:          0.00246393 ETH
+
+
+2_deploy_contracts.js
+=====================
+
+   Deploying 'SimpleStorage'
+   -------------------------
+   > block number:        4884835
+   > block timestamp:     1565402435
+   > account:             0x730bF3B67090511A64ABA060FbD2F7903536321E
+   > balance:             28.324184081499999999
+   > gas used:            4385303
+   > gas price:           10 gwei
+   > value sent:          0 ETH
+   > total cost:          0.04385303 ETH
+
+   -------------------------------------
+   > Total cost:          0.04385303 ETH
+
+
+Summary
+=======
+> Total deployments:   2
+> Final cost:          0.04631696 ETH
+
+
+Starting migrations...
+======================
+> Network name:    'rinkeby'
+> Network id:      4
+> Block gas limit: 0x6acfc0
+
+
+1_initial_migration.js
+======================
+
+   Deploying 'Migrations'
+   ----------------------
+   > transaction hash:    0xd1455df783563d7d27109fcc50af79b191842f02b0d2f419635f065c3b220961
+   > Blocks: 1            Seconds: 17
+   > contract address:    0x9D3A1C8333C40970C106220b18Cc659f97846521
+   > block number:        4884833
+   > block timestamp:     1565402456
+   > account:             0x730bF3B67090511A64ABA060FbD2F7903536321E
+   > balance:             28.368157341499999999
+   > gas used:            261393
+   > gas price:           10 gwei
+   > value sent:          0 ETH
+   > total cost:          0.00261393 ETH
+
+
+   > Saving migration to chain.
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:          0.00261393 ETH
+
+
+2_deploy_contracts.js
+=====================
+
+   Deploying 'SimpleStorage'
+   -------------------------
+   > transaction hash:    0x5072840ca22b25f474d427f98182ddb8a23355d5c9138389ed96597df46aad74
+   > Blocks: 0            Seconds: 12
+   > contract address:    0x85e4a4B68edDEF665e139651b63AbE7AED921f90
+   > block number:        4884835
+   > block timestamp:     1565402486
+   > account:             0x730bF3B67090511A64ABA060FbD2F7903536321E
+   > balance:             28.323884081499999999
+   > gas used:            4385303
+   > gas price:           10 gwei
+   > value sent:          0 ETH
+   > total cost:          0.04385303 ETH
+
+
+   > Saving migration to chain.
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:          0.04385303 ETH
+
+
+Summary
+=======
+> Total deployments:   2
+> Final cost:          0.04646696 ETH

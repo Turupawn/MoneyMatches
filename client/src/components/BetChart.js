@@ -1,15 +1,15 @@
 import React from "react";
-import { Box, Heading, Text } from "rimble-ui";
+import { Box } from "rimble-ui";
 import {
-  PieChart, Pie, Sector, Cell,
+  PieChart, Pie, Cell,
 } from 'recharts';
 
 
 class BetChart extends React.Component {
-  state = { 
+  state = {
     data: [
-      { name: this.props.player1_name, value: this.props.player1_pot },
-      { name: this.props.player2_name, value: this.props.player2_pot },
+      { name: this.props.player1_name, value: Number(this.props.player1_pot) },
+      { name: this.props.player2_name, value: Number(this.props.player2_pot) }
     ],
     RADIAN: Math.PI / 180,
     renderCustomizedLabel: ({
@@ -20,13 +20,13 @@ class BetChart extends React.Component {
       const y = cy + radius * Math.sin(-midAngle * this.state.RADIAN);
     
       return (
-        <text x={x} y={y} fill="black" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+        <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
           {`${(percent * 100).toFixed(0)}% ${this.state.data[index].name}`}
         </text>
       );
     },
-    COLORS: ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'],
-   };
+    COLORS: ['#0088FE', '#00C49F', '#FFBB28', '#FF8042']
+  };
 
   render() {
     return (

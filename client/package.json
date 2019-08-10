@@ -1,9 +1,12 @@
 {
+  "homepage": "./",
   "name": "client",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "3box": "^1.10.5",
     "@rimble/connection-banner": "^1.2.1",
+    "@rimble/network-indicator": "^1.2.1",
     "openzeppelin-solidity": "^2.2.0",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",

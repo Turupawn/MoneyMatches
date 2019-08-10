@@ -7,7 +7,8 @@ contract SimpleStorage {
   // Structs
   struct MoneyMatch
   {
-    string player1_name;
+    bytes32 player1_name;
+    bytes32 player2_name;
     address player1_addr;
     address player2_addr;
     address host_addr;
@@ -24,8 +25,8 @@ contract SimpleStorage {
   event MoneyMatchCreated
   (
     uint256 id,
-    string player1_name,
-    string player2_name,
+    bytes32 player1_name,
+    bytes32 player2_name,
     address player1_addr,
     address player2_addr,
     address host_addr,
@@ -90,6 +91,38 @@ contract SimpleStorage {
   mapping(uint256 => bool) public player2_has_cashed_out;
 
   // Read only functions
+  function getLatestMoneyMatchId() public view returns (uint256) {
+    return money_match_count;
+  }
+
+  function getPlayer1Name(uint256 money_match_id) public view returns (bytes32) {
+    return money_matches[money_match_id].player1_name;
+  }
+
+  function getPlayer2Name(uint256 money_match_id) public view returns (bytes32) {
+    return money_matches[money_match_id].player2_name;
+  }
+
+  function getPlayer1Address(uint256 money_match_id) public view returns (address) {
+    return money_matches[money_match_id].player1_addr;
+  }
+
+  function getPlayer2Address(uint256 money_match_id) public view returns (address) {
+    return money_matches[money_match_id].player2_addr;
+  }
+
+  function getHostAddress(uint256 money_match_id) public view returns (address) {
+    return money_matches[money_match_id].host_addr;
+  }
+
+  function getSummary(uint256 money_match_id) public view returns (string memory) {
+    return money_matches[money_match_id].summary;
+  }
+
+  function getImageIPFSHash(uint256 money_match_id) public view returns (string memory) {
+    return money_matches[money_match_id].image_ipfs_hash;
+  }
+
   function getPlayer1Pot(uint256 money_match_id) public view returns (uint) {
     return money_matches[money_match_id].player1_pot;
   }
@@ -153,6 +186,38 @@ contract SimpleStorage {
     return money_matches[money_match_id].state == MoneyMatchState.Player2Wins;
   }
 
+  function isAddressHost(uint256 money_match_id, address addr) public view returns (bool) {
+    return money_matches[money_match_id].host_addr == addr;
+  }
+
+  function isAddressPlayer1(uint256 money_match_id, address addr) public view returns (bool) {
+    return money_matches[money_match_id].player1_addr == addr;
+  }
+
+  function isAddressPlayer2(uint256 money_match_id, address addr) public view returns (bool) {
+    return money_matches[money_match_id].player2_addr == addr;
+  }
+
+  function hasCashedOutPlayer1Bet(uint256 money_match_id, address addr) public view returns (bool) {
+    return has_cashed_out_player1_bet[money_match_id][addr];
+  }
+
+  function hasCashedOutPlayer2Bet(uint256 money_match_id, address addr) public view returns (bool) {
+    return has_cashed_out_player2_bet[money_match_id][addr];
+  }
+
+  function hasHostCashedOut(uint256 money_match_id) public view returns (bool) {
+    return host_has_cashed_out[money_match_id];
+  }
+
+  function hasPlayer1CashedOut(uint256 money_match_id) public view returns (bool) {
+    return player1_has_cashed_out[money_match_id];
+  }
+
+  function hasPlayer2CashedOut(uint256 money_match_id) public view returns (bool) {
+    return player2_has_cashed_out[money_match_id];
+  }
+
   // Modifiers
   modifier betsAreOpen(uint256 money_match_id) {
     require(isBetsOpen(money_match_id), "Bets are currently closed for the selected money match.");
@@ -181,31 +246,31 @@ contract SimpleStorage {
 
   modifier hasNotCashedOutPlayer1Bet(uint256 money_match_id)
   {
-    require(!has_cashed_out_player1_bet[money_match_id][msg.sender], "Bettor has already cashed out his player 1 bet");
+    require(!hasCashedOutPlayer1Bet(money_match_id,msg.sender), "Bettor has already cashed out his player 1 bet");
     _;
   }
 
   modifier hasNotCashedOutPlayer2Bet(uint256 money_match_id)
   {
-    require(!has_cashed_out_player2_bet[money_match_id][msg.sender], "Bettor has already cashed out his player 2 bet");
+    require(!hasCashedOutPlayer2Bet(money_match_id,msg.sender), "Bettor has already cashed out his player 2 bet");
     _;
   }
 
   modifier hostHasNotCashedOut(uint256 money_match_id)
   {
-    require(!host_has_cashed_out[money_match_id], "Host has already cashed out");
+    require(!hasHostCashedOut(money_match_id), "Host has already cashed out");
     _;
   }
 
   modifier player1HasNotCashedOut(uint256 money_match_id)
   {
-    require(!player1_has_cashed_out[money_match_id], "Player 1 has already cashed out");
+    require(!hasPlayer1CashedOut(money_match_id), "Player 1 has already cashed out");
     _;
   }
 
   modifier player2HasNotCashedOut(uint256 money_match_id)
   {
-    require(!player2_has_cashed_out[money_match_id], "Player 2 has already cashed out");
+    require(!hasPlayer2CashedOut(money_match_id), "Player 2 has already cashed out");
     _;
   }
 
@@ -223,26 +288,26 @@ contract SimpleStorage {
 
   modifier isHost(uint256 money_match_id)
   {
-    require(money_matches[money_match_id].host_addr == msg.sender, "You have not the host of this money match");
+    require(isAddressHost(money_match_id,msg.sender), "You have not the host of this money match");
     _;
   }
 
   modifier isPlayer1(uint256 money_match_id)
   {
-    require(money_matches[money_match_id].player1_addr == msg.sender, "You have not the player 1 of this money match");
+    require(isAddressPlayer1(money_match_id,msg.sender), "You have not the player 1 of this money match");
     _;
   }
 
   modifier isPlayer2(uint256 money_match_id)
   {
-    require(money_matches[money_match_id].player2_addr == msg.sender, "You have not the player 2 of this money match");
+    require(isAddressPlayer2(money_match_id,msg.sender), "You have not the player 2 of this money match");
     _;
   }
 
   // Write functions
   function createMoneyMatch (
-    string memory player1_name,
-    string memory player2_name,
+    bytes32 player1_name,
+    bytes32 player2_name,
     address player1_addr,
     address player2_addr,
     uint8 winner_cut_percentage,
@@ -253,6 +318,7 @@ contract SimpleStorage {
     money_match_count = money_match_count.add(1);
     money_matches[money_match_count] = MoneyMatch(
       player1_name,
+      player2_name,
       player1_addr,
       player2_addr,
       msg.sender,
@@ -281,7 +347,6 @@ contract SimpleStorage {
 
   function bet(
     uint256 money_match_id,
-    uint256 bet_amount,
     uint8 player
   ) public payable
     betsAreOpen(money_match_id)
@@ -289,19 +354,19 @@ contract SimpleStorage {
   {
     if(player == 1)
     {
-      player1_bets[money_match_id][msg.sender] = player1_bets[money_match_id][msg.sender].add(bet_amount);
-      money_matches[money_match_id].player1_pot = money_matches[money_match_id].player1_pot.add(bet_amount);
+      player1_bets[money_match_id][msg.sender] = player1_bets[money_match_id][msg.sender].add(msg.value);
+      money_matches[money_match_id].player1_pot = money_matches[money_match_id].player1_pot.add(msg.value);
     }
     if(player == 2)
     {
-      player2_bets[money_match_id][msg.sender] = player2_bets[money_match_id][msg.sender].add(bet_amount);
-      money_matches[money_match_id].player2_pot = money_matches[money_match_id].player2_pot.add(bet_amount);
+      player2_bets[money_match_id][msg.sender] = player2_bets[money_match_id][msg.sender].add(msg.value);
+      money_matches[money_match_id].player2_pot = money_matches[money_match_id].player2_pot.add(msg.value);
     }
 
     emit BetSubmitted (
       money_match_id,
       msg.sender,
-      bet_amount,
+      msg.value,
       player
     );
   }

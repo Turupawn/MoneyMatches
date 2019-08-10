@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import Host from './Host';
-import Player from './Player';
 import * as serviceWorker from './serviceWorker';
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
@@ -18,7 +17,6 @@ function AppRouter() {
         <Router>
           <div>
             <Route path="/host/" component={Host} />
-            <Route path="/player/" component={Player} />
             <Route path="/money_match/:money_match_id?" component={App} />
             <Route path="/" exact component={App} />
           </div>

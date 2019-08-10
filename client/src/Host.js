@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import SimpleStorageContract from "./contracts/SimpleStorage.json";
 import getWeb3 from "./utils/getWeb3";
 import ipfs from './ipfs'
+import { Input, Heading, Box, Button, Field } from "rimble-ui";
 
 class Admin extends Component {
   state = { money_match_id: "1", // Hardcoded preset
@@ -9,8 +10,9 @@ class Admin extends Component {
             address_player2: "",
             host_cut_percentage: "",
             winner_cut_percentage: "",
-            name: "",
-            description: "",
+            player1_name: "",
+            player2_name: "",
+            summary: "",
             image_buffer: null,
             image_ipfs_hash: "",
             web3: null, accounts: null, contract: null };
@@ -22,9 +24,17 @@ class Admin extends Component {
     this.handleAddressPlayer2Change = this.handleAddressPlayer2Change.bind(this);
     this.handleHostCutPercentageChange = this.handleHostCutPercentageChange.bind(this);
     this.handleWinnerCutPercentageChange = this.handleWinnerCutPercentageChange.bind(this);
-    this.handleNameChange = this.handleNameChange.bind(this);
-    this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
+    this.handlePlayer1NameChange = this.handlePlayer1NameChange.bind(this);
+    this.handlePlayer2NameChange = this.handlePlayer2NameChange.bind(this);
+    this.handleSummaryChange = this.handleSummaryChange.bind(this);
     this.handleImageChange = this.handleImageChange.bind(this);
+  }
+  
+  handlePlayer1NameChange(event) {
+    this.setState({ player1_name: this.state.web3.utils.utf8ToHex(event.target.value) });
+  }
+  handlePlayer2NameChange(event) {
+    this.setState({ player2_name: this.state.web3.utils.utf8ToHex(event.target.value) });
   }
 
   handleAddressPlayer1Change(event) {
@@ -43,12 +53,8 @@ class Admin extends Component {
     this.setState({winner_cut_percentage: event.target.value});
   }
 
-  handleNameChange(event) {
-    this.setState({name: event.target.value});
-  }
-
-  handleDescriptionChange(event) {
-    this.setState({description: event.target.value});
+  handleSummaryChange(event) {
+    this.setState({summary: event.target.value });
   }
 
   handleImageChange(event) {
@@ -91,45 +97,24 @@ class Admin extends Component {
   createMoneyMatchJS = async () => {
     const { accounts, contract } = this.state;
 
-    console.log("A");
     await ipfs.files.add(this.state.image_buffer, (error, result) => {
       if(error) {
         console.log(error);
         return;
       }
       this.setState({ image_ipfs_hash: result[0].hash });
-      console.log(this.state.image_ipfs_hash);
-    
+      //console.log(this.state.image_ipfs_hash);
+
       contract.methods.createMoneyMatch(
+        this.state.player1_name,
+        this.state.player2_name,
         this.state.address_player1,
         this.state.address_player2,
-        this.state.host_cut_percentage,
         this.state.winner_cut_percentage,
-        this.state.name,
-        this.state.description,
+        this.state.host_cut_percentage,
+        this.state.summary,
         this.state.image_ipfs_hash).send({ from: accounts[0] });
     });
-    console.log("B");
-  };
-
-  closeBetsJS = async () => {
-    const { accounts, contract } = this.state;
-    await contract.methods.closeBets(this.state.money_match_id).send({ from: accounts[0] });
-  };
-
-  player1WinsJS = async () => {
-    const { accounts, contract } = this.state;
-    await contract.methods.player1Wins(this.state.money_match_id).send({ from: accounts[0] });
-  };
-
-  player2WinsJS = async () => {
-    const { accounts, contract } = this.state;
-    await contract.methods.player2Wins(this.state.money_match_id).send({ from: accounts[0] });
-  };
-
-  cashOutHostJS = async () => {
-    const { accounts, contract } = this.state;
-    await contract.methods.cashOutHost(this.state.money_match_id).send({ from: accounts[0] });
   };
 
   runExample = async () => {
@@ -140,64 +125,34 @@ class Admin extends Component {
       return <div>Loading Web3, accounts, and contract...</div>;
     }
     return (
-      <div className="Admin">
-        <h1>Create money match</h1>
-        <form>
-          <label>
-            Name:
-            <input type="text" value={this.state.name} onChange={this.handleNameChange} />
-          </label>
-          <label>
-            Description:
-            <input type="text" value={this.state.description} onChange={this.handleDescriptionChange} />
-          </label>
-          <label>
-            Image:
-            <input type="file" onChange={this.handleImageChange} />
-          </label>
-          <label>
-            Player 1 address:
-            <input type="text" value={this.state.address_player1} onChange={this.handleAddressPlayer1Change} />
-          </label>
-          <label>
-            Player 2 address:
-            <input type="text" value={this.state.address_player2} onChange={this.handleAddressPlayer2Change} />
-          </label>
-          <label>
-            Host cut percentage:
-            <input type="text" value={this.state.host_cut_percentage} onChange={this.handleHostCutPercentageChange} />
-          </label>
-          <label>
-            Winner cut percentage:
-            <input type="text" value={this.state.winner_cut_percentage} onChange={this.handleWinnerCutPercentageChange} />
-          </label>
-        </form>
-        <div>
-          <button onClick={this.createMoneyMatchJS}>
-            Create money match
-          </button>
-        </div>
-        <div>
-          <button onClick={this.closeBetsJS}>
-            Close bets
-          </button>
-        </div>
-        <div>
-          <button onClick={this.player1WinsJS}>
-            Player 1 Wins!
-          </button>
-        </div>
-        <div>
-          <button onClick={this.player2WinsJS}>
-            Player 2 Wins!
-          </button>
-        </div>
-        <div>
-          <button onClick={this.cashOutHostJS}>
-            Cash out
-          </button>
-        </div>
-      </div>
+      <Box maxWidth={'640px'} mx={'auto'} p={3}>
+        <Heading>Create money match</Heading>
+        <Field label="Player 1 name">
+          <Input type="text" required={true} placeholder="e.g. Daigo" onChange={this.handlePlayer1NameChange} />
+        </Field>
+        <Field label="Player 2 name">
+          <Input type="text" required={true} placeholder="e.g. Uncle Valle" onChange={this.handlePlayer2NameChange} />
+        </Field>
+        <Field label="Player 1 address">
+          <Input type="text" required={true} placeholder="e.g. 0x730bF3B67090511A64ABA060FbD2F7903536321E" onChange={this.handleAddressPlayer1Change} />
+        </Field>
+        <Field label="Player 2 address">
+          <Input type="text" required={true} placeholder="e.g. 0x730bF3B67090511A64ABA060FbD2F7903536321E" onChange={this.handleAddressPlayer2Change} />
+        </Field>
+        <Field label="Host cut percentage">
+          <Input type="text" required={true} placeholder="e.g. 3" onChange={this.handleHostCutPercentageChange} />
+        </Field>
+        <Field label="Winner cut percentage">
+          <Input type="text" required={true} placeholder="e.g. 10" value={this.state.winner_cut_percentage} onChange={this.handleWinnerCutPercentageChange} />
+        </Field>
+        <Field label="Summary">
+          <Input type="text" required={true} placeholder="e.g. 14/2 8PM GMT @ twitch.com/evo" onChange={this.handleSummaryChange} />
+        </Field>
+        <Field label="Image">
+          <input type="file" required={true} onChange={this.handleImageChange} />
+        </Field>
+        <Button onClick={this.createMoneyMatchJS}>Create</Button>
+      </Box>
     );
   }
 }
