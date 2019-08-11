@@ -32,6 +32,6 @@ npm run build
 ## Our stack
 
 * [React Box](https://github.com/truffle-box/react-box) truffle + react + webpack bundle
-* [Rimble](https://rimble.consensys.design)
+* [Rimble](https://rimble.consensys.design) UI
 * [3Box](https://3box.io/)'s user data
 * [Recharts](http://recharts.org/) charts
