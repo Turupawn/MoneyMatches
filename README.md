@@ -1,71 +1,37 @@
-# React Truffle Box
+# Atomic Buster
 
-This box comes with everything you need to start using smart contracts from a react app. This is as barebones as it gets, so nothing stands in your way.
+DApp powering a sustainable and exciting community by providing an open platform for competitors, community managers, bettors and sponsors.
 
-## Installation
+## How?
 
-First ensure you are in a new and empty directory.
+Our smart contract allows flexible parameters so `competitors` are incentivized to win, `community managers` are incentivized to keep hosting events and `bettors` are incentivized to keep betting and supporting the community.
 
-1. Run the `unbox` command via `npx` and skip to step 3. This will install all necessary dependencies. A Create-React-App is generated in the `client` directory.
-   ```js
-   npx truffle unbox react
-   ```
+Check out our live demo at [rinkeby.atomicbuster.com](http://rinkeby.atomicbuster.com/)
 
-2. Alternatively, you can install Truffle globally and run the `unbox` command.
-    ```javascript
-    npm install -g truffle
-    truffle unbox react
-    ```
+## Compile, run and build
 
-3. Run the development console.
-    ```javascript
-    truffle develop
-    ```
+1. Compile and run the contract on either `ganache` or `rinkeby`
 
-4. Compile and migrate the smart contracts. Note inside the development console we don't preface commands with `truffle`.
-    ```javascript
-    compile
-    migrate
-    ```
+```
+truffle migrate --network ganache
+```
 
-5. In the `client` directory, we run the React app. Smart contract changes must be manually recompiled and migrated.
-    ```javascript
-    // in another terminal (i.e. not in the truffle develop prompt)
-    cd client
-    npm run start
-    ```
+2. Run the client
 
-6. Truffle can run tests written in Solidity or JavaScript against your smart contracts. Note the command varies slightly if you're in or outside of the development console.
-    ```javascript
-    // inside the development console.
-    test
+```
+cd client
+npm start
+```
 
-    // outside the development console..
-    truffle test
-    ```
+3. Build the client for production
 
-7. Jest is included for testing React components. Compile your contracts before running Jest, or you may receive some file not found errors.
-    ```javascript
-    // ensure you are inside the client directory when running this
-    npm run test
-    ```
+```
+npm run build
+```
 
-8. To build the application for production, use the build script. A production build will be in the `client/build` folder.
-    ```javascript
-    // ensure you are inside the client directory when running this
-    npm run build
-    ```
+## Our stack
 
-## FAQ
-
-* __How do I use this with the Ganache-CLI?__
-
-    It's as easy as modifying the config file! [Check out our documentation on adding network configurations](http://truffleframework.com/docs/advanced/configuration#networks). Depending on the port you're using, you'll also need to update line 29 of `client/src/utils/getWeb3.js`.
-
-* __Where is my production build?__
-
-    The production build will be in the `client/build` folder after running `npm run build` in the `client` folder.
-
-* __Where can I find more documentation?__
-
-    This box is a marriage of [Truffle](http://truffleframework.com/) and a React setup created with [create-react-app](https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md). Either one would be a great place to start!
+* [React Box](https://github.com/truffle-box/react-box) truffle + react + webpack bundle
+* [Rimble](https://rimble.consensys.design)
+* [3Box](https://3box.io/)'s user data
+* [Recharts](http://recharts.org/) charts
