@@ -1,12 +1,16 @@
-# Atomic Buster
+# What?
 
-DApp powering a sustainable and exciting community by providing an open platform for competitors, community managers, bettors and sponsors.
+Moneymatches on the blockchain.
+
+Live demo on Rinkeby network [rinkeby.atomicbuster.com](http://rinkeby.atomicbuster.com/)
 
 ## How?
 
-Our smart contract allows flexible parameters so `competitors` are incentivized to win, `community managers` are incentivized to keep hosting events and `bettors` are incentivized to keep betting and supporting the community.
+Atomic Buster's ethereum smart contract simplifies the interaction between Players, Community Managers and Bettors.
 
-Check out our live demo at [rinkeby.atomicbuster.com](http://rinkeby.atomicbuster.com/)
+* `Players` are incentivized to win
+* `Community Managers` are incentivized to keep hosting events
+* `Bettors` are incentivized to keep betting and supporting the community
 
 ## Compile, run and build
 
@@ -29,7 +33,7 @@ npm start
 npm run build
 ```
 
-## Our stack
+## Stack
 
 * [React Box](https://github.com/truffle-box/react-box) truffle + react + webpack bundle
 * [Rimble](https://rimble.consensys.design) UI
